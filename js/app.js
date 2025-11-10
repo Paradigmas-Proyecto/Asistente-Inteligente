@@ -88,7 +88,7 @@ function renderizarTareas(tareasAMostrar) {
             <div class="empty-state">
                 <i class="bi bi-inbox"></i>
                 <h4>No hay tareas</h4>
-                <p>Agrega una nueva tarea para comenzar</p>
+                <p>Crear una nueva tarea para comenzar</p>
             </div>
         `;
         return;
@@ -217,6 +217,7 @@ function formatearFecha(fecha) {
  * Prepara el formulario para nueva tarea
  */
 function prepararNuevaTarea() {
+    tareaEnEdicion = null; // Limpiar tarea en edición
     document.getElementById('modalTareaTitle').innerHTML = 
         '<i class="bi bi-plus-circle"></i> Nueva Tarea';
     limpiarFormulario();
@@ -232,16 +233,13 @@ function prepararNuevaTarea() {
  */
 async function editarTarea(id) {
     try {
-        console.log('Editando tarea con ID:', id);
         tareaEnEdicion = await tareaService.obtener(id);
-        console.log('Tarea obtenida:', tareaEnEdicion);
         
         document.getElementById('modalTareaTitle').innerHTML = 
             '<i class="bi bi-pencil"></i> Editar Tarea';
         
         // Llenar formulario
         document.getElementById('tareaId').value = tareaEnEdicion.id;
-        console.log('tareaId establecido a:', document.getElementById('tareaId').value);
         document.getElementById('tareaNombre').value = tareaEnEdicion.nombre;
         document.getElementById('tareaFecha').value = tareaEnEdicion.fecha;
         document.getElementById('tareaDuracion').value = tareaEnEdicion.duracionMinutos;
@@ -289,6 +287,7 @@ async function guardarTarea() {
         const climaSeleccionado = document.querySelector('input[name="clima"]:checked').value;
 
         const tarea = {
+            usuarioId: tareaEnEdicion ? tareaEnEdicion.usuarioId : 1, // Usar usuarioId de la tarea en edición o 1 por defecto
             nombre: document.getElementById('tareaNombre').value,
             fecha: document.getElementById('tareaFecha').value,
             duracionMinutos: parseInt(document.getElementById('tareaDuracion').value),
@@ -340,21 +339,28 @@ async function guardarTarea() {
         }
 
         const id = document.getElementById('tareaId').value;
-        console.log('ID de tarea a guardar:', id, 'Tipo:', typeof id);
         
         if (id && id !== '') {
             // Actualizar
-            console.log('Actualizando tarea con ID:', parseInt(id));
             await tareaService.actualizar(parseInt(id), tarea);
         } else {
             // Crear
-            console.log('Creando nueva tarea');
             await tareaService.crear(tarea);
         }
 
         modalTarea.hide();
-        await cargarTareas();
-        actualizarEstadisticas();
+        
+        // Pequeño delay para asegurar que el modal se cierre completamente
+        setTimeout(async () => {
+            // Limpiar filtros antes de recargar para mostrar todas las tareas
+            document.getElementById('filtroFecha').value = '';
+            document.getElementById('filtroEstado').value = '';
+            document.getElementById('filtroPrioridad').value = '';
+            filtrosActivos = {};
+            
+            await cargarTareas();
+            actualizarEstadisticas();
+        }, 300);
         
     } catch (error) {
         console.error('Error al guardar tarea:', error);
@@ -384,7 +390,7 @@ async function eliminarTarea(id) {
     let mensaje = `¿Está seguro de que desea eliminar la tarea "${tarea.nombre}"?`;
     
     if (tareasHijas.length > 0) {
-        mensaje += `\n\n⚠️ ADVERTENCIA: Esta tarea tiene ${tareasHijas.length} tarea(s) dependiente(s) que también se eliminarán:\n\n`;
+        mensaje += `\n\n<i class="bi bi-exclamation-triangle-fill"></i> ADVERTENCIA: Esta tarea tiene ${tareasHijas.length} tarea(s) dependiente(s) que también se eliminarán:\n\n`;
         tareasHijas.forEach((hija, index) => {
             mensaje += `${index + 1}. ${hija.nombre}\n`;
         });
@@ -407,7 +413,7 @@ async function eliminarTarea(id) {
             
             // Mensaje de confirmación
             if (tareasHijas.length > 0) {
-                mostrarAlerta('success', 'Eliminación Exitosa', `Se eliminaron ${tareasHijas.length + 1} tarea(s) exitosamente`);
+                mostrarAlerta('success', 'Eliminación Exitosa', `Se eliminaron ${tareasHijas.length + 1} tarea(s) con éxito`);
             }
         } catch (error) {
             console.error('Error al eliminar tarea:', error);
@@ -431,7 +437,7 @@ async function marcarCompletada(id) {
                 mostrarAlerta(
                     'warning',
                     'No se puede completar',
-                    `No puedes completar esta tarea porque depende de "${tareaPadre.nombre}" que aún no está completada.\n\nPrimero completa la tarea padre.`
+                    `No se puede completar esta tarea porque depende de "${tareaPadre.nombre}" que aún no está completada.\n\nPrimero complete la tarea padre.`
                 );
                 return;
             }

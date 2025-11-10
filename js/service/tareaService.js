@@ -57,7 +57,7 @@ const tareaService = {
         } catch (error) {
             console.error('Error en crear:', error);
             if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verificar que esté en el puerto 8081');
+                throw new Error('No se pudo conectar al servidor. Verifique que esté en el puerto 8081');
             }
             throw error;
         }
@@ -75,12 +75,15 @@ const tareaService = {
                 body: JSON.stringify(tarea)
             });
             
-            if (!response.ok) throw new Error('Error al actualizar tarea');
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error al actualizar tarea: ${errorText}`);
+            }
             return await response.json();
         } catch (error) {
             console.error('Error en actualizar:', error);
             if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verificar que esté en el puerto 8081');
+                throw new Error('No se pudo conectar al servidor. Verifique que esté en el puerto 8081');
             }
             throw error;
         }
@@ -101,7 +104,7 @@ const tareaService = {
         } catch (error) {
             console.error('Error en eliminar:', error);
             if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verificar que esté en el puerto 8081');
+                throw new Error('No se pudo conectar al servidor. Verifique que esté en el puerto 8081');
             }
             throw error;
         }
