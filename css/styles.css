@@ -1,0 +1,362 @@
+/* ============================================
+   Estilos personalizados para Asistente Inteligente
+   ============================================ */
+
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Navbar personalizado */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+}
+
+/* Cards con sombra suave */
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Badges de prioridad */
+.badge-prioridad {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+}
+
+.badge-alta {
+    background-color: #dc3545;
+}
+
+.badge-media {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-baja {
+    background-color: #198754;
+}
+
+/* Badges de estado */
+.badge-estado {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+}
+
+.badge-pendiente {
+    background-color: #6c757d;
+}
+
+.badge-planificada {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.badge-completada {
+    background-color: #198754;
+}
+
+/* Item de tarea en la lista */
+.tarea-item {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    background-color: white;
+}
+
+.tarea-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.tarea-item.prioridad-alta {
+    border-left-color: #dc3545;
+}
+
+.tarea-item.prioridad-media {
+    border-left-color: #ffc107;
+}
+
+.tarea-item.prioridad-baja {
+    border-left-color: #198754;
+}
+
+.tarea-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.tarea-nombre {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #212529;
+    margin: 0;
+}
+
+.tarea-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.tarea-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tarea-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Timeline de planificación */
+.timeline-item {
+    position: relative;
+    padding-left: 2.5rem;
+    padding-bottom: 2rem;
+    border-left: 2px solid #dee2e6;
+}
+
+.timeline-item:last-child {
+    border-left: none;
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -0.625rem;
+    top: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.timeline-content {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.timeline-time {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-duration {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Iconos de clima */
+.clima-icon {
+    font-size: 1.25rem;
+}
+
+/* Botones personalizados */
+.btn {
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Modal personalizado */
+.modal-content {
+    border: none;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+.modal-header {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Formularios */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Loading spinner */
+.spinner-border {
+    border-width: 0.25em;
+}
+
+/* Estadísticas */
+.card.border-warning .card-body h3,
+.card.border-info .card-body h3,
+.card.border-success .card-body h3,
+.card.border-primary .card-body h3 {
+    font-weight: 700;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #adb5bd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tarea-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .tarea-actions {
+        flex-direction: column;
+    }
+
+    .timeline-item {
+        padding-left: 2rem;
+    }
+}
+
+/* Alerts personalizados */
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.alert i {
+    margin-right: 0.5rem;
+}
+
+/* Tooltips (si se usan) */
+.tooltip {
+    font-size: 0.875rem;
+}
+
+/* Scrollbar personalizado (webkit) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Utilidades adicionales */
+.text-small {
+    font-size: 0.875rem;
+}
+
+.text-tiny {
+    font-size: 0.75rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.border-left-primary {
+    border-left: 4px solid var(--primary-color) !important;
+}
+
+.border-left-warning {
+    border-left: 4px solid var(--warning-color) !important;
+}
+
+.border-left-danger {
+    border-left: 4px solid var(--danger-color) !important;
+}

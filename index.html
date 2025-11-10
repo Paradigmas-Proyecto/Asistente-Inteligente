@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Inteligente de Tareas</title>
+    
+    <!-- Bootstrap 5 CSS - Framework de diseño responsivo -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons - Biblioteca de iconos -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS - Estilos personalizados de la aplicación -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Barra de navegación principal -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <!--Ícono de calendario-->
+                <i class="bi bi-calendar-check"></i> Asistente Inteligente
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">
+                            <!--Ícono de lista de tareas-->
+                            <i class="bi bi-list-task"></i> Mis Tareas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="planificacion.html">
+                            <!--Ícono de calendario-->
+                            <i class="bi bi-calendar3"></i> Planificación
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal de la aplicación -->
+    <div class="container mt-4">
+        <!-- Encabezado de la página con título y botón de acción -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>Mis Tareas</h2>
+                <p class="text-muted">Gestionar y organizar actividades diarias</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <!-- Botón para abrir el modal de nueva tarea -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTarea" onclick="prepararNuevaTarea()">
+                    <i class="bi bi-plus-circle"></i> Nueva Tarea
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel de filtros para buscar tareas específicas -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Filtro por fecha -->
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="filtroFecha">
+                    </div>
+                    <!-- Filtro por estado de la tarea -->
+                    <div class="col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" id="filtroEstado">
+                            <option value="">Todos</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="PLANIFICADA">Planificada</option>
+                            <option value="COMPLETADA">Completada</option>
+                        </select>
+                    </div>
+                    <!-- Filtro por nivel de prioridad -->
+                    <div class="col-md-3">
+                        <label class="form-label">Prioridad</label>
+                        <select class="form-select" id="filtroPrioridad">
+                            <option value="">Todas</option>
+                            <option value="ALTA">Alta</option>
+                            <option value="MEDIA">Media</option>
+                            <option value="BAJA">Baja</option>
+                        </select>
+                    </div>
+                    <!-- Botón para resetear todos los filtros -->
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-secondary w-100" id="btnLimpiarFiltros">
+                            <i class="bi bi-x-circle"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de estadísticas: muestra contadores de tareas por estado -->
+        <div class="row mb-4">
+            <!-- Contador de tareas pendientes -->
+            <div class="col-md-3">
+                <div class="card text-center border-warning">
+                    <div class="card-body">
+                        <h3 class="text-warning" id="statPendientes">0</h3>
+                        <p class="mb-0 text-muted">Pendientes</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Contador de tareas planificadas -->
+            <div class="col-md-3">
+                <div class="card text-center border-info">
+                    <div class="card-body">
+                        <h3 class="text-info" id="statPlanificadas">0</h3>
+                        <p class="mb-0 text-muted">Planificadas</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Contador de tareas completadas -->
+            <div class="col-md-3">
+                <div class="card text-center border-success">
+                    <div class="card-body">
+                        <h3 class="text-success" id="statCompletadas">0</h3>
+                        <p class="mb-0 text-muted">Completadas</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Contador total de tareas -->
+            <div class="col-md-3">
+                <div class="card text-center border-primary">
+                    <div class="card-body">
+                        <h3 class="text-primary" id="statTotal">0</h3>
+                        <p class="mb-0 text-muted">Total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor principal de la lista de tareas -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-list-ul"></i> Lista de Tareas
+            </div>
+            <div class="card-body">
+                <!-- Contenedor donde se renderizarán dinámicamente las tarjetas de tareas -->
+                <div id="listaTareas">
+                    <!-- Estado de carga inicial (reemplazado cuando se cargan las tareas) -->
+                    <div class="text-center py-5">
+                        <i class="bi bi-hourglass-split text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3">Cargando tareas...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (ventana emergente) para crear o editar una tarea -->
+    <div class="modal fade" id="modalTarea" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalTareaTitle">
+                        <!--Ícono de agregar tarea-->
+                        <i class="bi bi-plus-circle"></i> Nueva Tarea
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formTarea">
+                        <input type="hidden" id="tareaId">
+                        
+                        <!-- Información básica -->
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label">Nombre de la Tarea <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="tareaNombre" required 
+                                       placeholder="Ej: Estudiar Paradigmas">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="tareaFecha" required>
+                            </div>
+                        </div>
+
+                        <!-- Campo de duración en minutos y hora deseada -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Duración (minutos) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="tareaDuracion" 
+                                       min="5" step="5" value="30" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Programar Hora (opcional)</label>
+                                <input type="time" class="form-control" id="tareaHora" 
+                                       pattern="[0-9]{2}:[0-9]{2}" step="3600">
+                            </div>
+                        </div>
+
+                        <!-- Selección de prioridad -->
+                        <div class="mb-3">
+                            <label class="form-label">Prioridad <span class="text-danger">*</span></label>
+                            <!-- Prioridad: ALTA, MEDIA, BAJA - usado por Prolog para ordenamiento -->
+                            <select class="form-select" id="tareaPrioridad" required>
+                                <option value="ALTA">Alta</option>
+                                <option value="MEDIA" selected>Media</option>
+                                <option value="BAJA">Baja</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campo oculto para el estado (siempre PENDIENTE al crear) -->
+                        <input type="hidden" id="tareaEstado" value="PENDIENTE">
+
+                        <!-- Selección de clima permitido (restricción climática) -->
+                        <div class="mb-3">
+                            <label class="form-label">Clima Permitido (opcional)</label>
+                            <div class="form-text mb-2">Selecciona en qué condición climática se puede realizar esta tarea</div>
+                            <!-- Radio buttons para seleccionar UN SOLO clima -->
+                            <!-- IMPORTANTE: Backend espera un único valor enum, no un array -->
+                            <div class="row">
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clima" id="climaSoleado" value="SOLEADO">
+                                        <label class="form-check-label" for="climaSoleado">
+                                            <i class="bi bi-brightness-high" style="color: #ffc107;"></i> Soleado
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clima" id="climaNublado" value="NUBLADO">
+                                        <label class="form-check-label" for="climaNublado">
+                                            <i class="bi bi-clouds" style="color: #6c757d;"></i> Nublado
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clima" id="climaLluvioso" value="LLUVIOSO">
+                                        <label class="form-check-label" for="climaLluvioso">
+                                            <i class="bi bi-cloud-rain-heavy" style="color: #0d6efd;"></i> Lluvioso
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clima" id="climaVentoso" value="VENTOSO">
+                                        <label class="form-check-label" for="climaVentoso">
+                                            <i class="bi bi-wind" style="color: #17a2b8;"></i> Ventoso
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <div class="form-check">
+                                        <!-- Opción para indicar que la tarea no tiene restricción climática -->
+                                        <input class="form-check-input" type="radio" name="clima" id="climaNinguno" value="" checked>
+                                        <label class="form-check-label" for="climaNinguno">
+                                            Sin restricción de clima
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selector de dependencias entre tareas -->
+                        <div class="mb-3">
+                            <label class="form-label">Depende de otra tarea (opcional)</label>
+                            <!-- Este select se llena dinámicamente con las tareas existentes -->
+                            <select class="form-select" id="tareaDependeDe">
+                                <option value="">Sin dependencia</option>
+                                <!-- Se llenará dinámicamente desde app.js -->
+                            </select>
+                            <div class="form-text">Esta tarea solo podrá realizarse después de completar la tarea seleccionada</div>
+                        </div>
+
+                        <!-- Campo de notas adicionales -->
+                        <div class="mb-3">
+                            <label class="form-label">Notas (opcional)</label>
+                            <textarea class="form-control" id="tareaNota" rows="3" 
+                                      placeholder="Agrega notas adicionales sobre esta tarea..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <!-- Botones de acción del modal -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnGuardarTarea">
+                        <i class="bi bi-floppy"></i> Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página con información del equipo -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-1">
+                <i class="bi bi-calendar-check"></i> Asistente Inteligente de Tareas
+            </p>
+            <p class="mb-0 text-white-50 small">
+                Universidad Nacional de Costa Rica - Paradigmas de Programación © 2025
+            </p>
+            <p class="mb-0 text-white-50 small">
+                Ian Villegas Jiménez - Bayron Camacho Ledezma - Marisol Hidalgo Murillo - Cristina Zúñiga Cárdenas
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal de Alertas -->
+    <div class="modal fade" id="modalAlerta" tabindex="-1" aria-labelledby="modalAlertaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" id="modalAlertaHeader">
+                    <h5 class="modal-title" id="modalAlertaLabel">
+                        <i class="bi" id="modalAlertaIcon"></i>
+                        <span id="modalAlertaTitulo"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalAlertaMensaje" style="white-space: pre-line;">
+                </div>
+                <div class="modal-footer" id="modalAlertaFooter">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnAlertaCancelar">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="btnAlertaConfirmar" style="display: none;">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de JavaScript (orden de carga importante) -->
+    <!-- Bootstrap JS - Framework UI -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Configuración de la aplicación (API_BASE_URL, USUARIO_ID, etc.) -->
+    <script src="js/config.js"></script>
+    <!-- Servicio de comunicación con el backend -->
+    <script src="js/service/tareaService.js"></script>
+    <!-- Lógica principal de la aplicación -->
+    <script src="js/app.js"></script>
+</body>
+</html>
